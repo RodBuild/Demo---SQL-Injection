@@ -37,8 +37,10 @@ void displayTestCases(vector<User> testCases) {
 
 /***************************************
  * Strong Mitigation:                  *
- * Check for invalid characters, to    *
- * simulate and allow list             *
+ * Limit to only valid characters, to  *
+ * simulate and allow list. Consider   *
+ * UNION, OR, UPDATE, SELECT, FROM,    *
+ * WHERE                               *
  * GOOD:                               *
  *      ^[a-zA-Z0-9_]*$                *
  ***************************************/
@@ -58,6 +60,7 @@ void weakMitigation(const vector<User> &testCases)
     for (auto x: testCases) {
         x.username = removeInvalidCharacters(x.username);
         x.password = removeInvalidCharacters(x.password);
+        cout << "   " << genQuery(x.username, x.password) << endl;
     }
 
 }
@@ -119,16 +122,24 @@ int main(int argc, char **argv)
             {
                 testUnion(testCases);
                 displayTestCases(testCases);
+                cout << "Weak Mitigation:\n";
+                weakMitigation(testCases);
             }
             else if (option == "4")
             {
                 testAddState(testCases);
+                cout << "Test Cases:\n";
                 displayTestCases(testCases);
+                cout << "Weak Mitigation:\n";
+                weakMitigation(testCases);
             }
             else if (option == "5")
             {
                 testComment(testCases);
+                cout << "Test Cases:\n";
                 displayTestCases(testCases);
+                cout << "Weak Mitigation:\n";
+                weakMitigation(testCases);
             }
             else if (option == "6")
             {
@@ -150,19 +161,31 @@ int main(int argc, char **argv)
         type = argv[1];
         if (type == "tautology") {
             testTautology(testCases);
+            cout << "Test Cases:\n";
             displayTestCases(testCases);
+            cout << "Weak Mitigation:\n";
+            weakMitigation(testCases);
         }
         else if (type == "union") {
-            testTautology(testCases);
+            testUnion(testCases);
+            cout << "Test Cases:\n";
             displayTestCases(testCases);
+            cout << "Weak Mitigation:\n";
+            weakMitigation(testCases);
         }
         else if (type == "state") {
-            testTautology(testCases);
+            testAddState(testCases);
+            cout << "Test Cases:\n";
             displayTestCases(testCases);
+            cout << "Weak Mitigation:\n";
+            weakMitigation(testCases);
         }
         else if (type == "comment") {
-            testTautology(testCases);
+            testComment(testCases);
+            cout << "Test Cases:\n";
             displayTestCases(testCases);
+            cout << "Weak Mitigation:\n";
+            weakMitigation(testCases);
         }
         else {
             cout << "Invalid type argument. Try again :)\n";
