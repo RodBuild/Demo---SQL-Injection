@@ -1,5 +1,6 @@
 #include "testCases.cpp"
 
+// Reassemble a blocklist
 string removeInvalidCharacters(const string text) {
     string clean = text;
     for (int i = 0; i < text.length(); i++)
@@ -14,13 +15,32 @@ string removeInvalidCharacters(const string text) {
     return clean;
 }
 
+// Reassemble an allowlist
+string checkForValidCharacters(const string text) {
+    string clean;
+    //  48-57   65-90   95   97-122
+    for (int i = 0; i < text.length(); i++) {
+        if (((int)text[i] == 95) ||                         //underscore(-)
+            ((int)text[i] >= 48 && (int)text[i] <= 57) ||   //lowercase letters (a-z)
+            ((int)text[i] >= 65 && (int)text[i] <= 90) ||   //uperppercase letters (A-Z)
+            ((int)text[i] >= 97 && (int)text[i] <= 122))    //numbers (0-9)
+        {
+            clean += text[i];
+        }
+        else {
+            break;
+        }
+    }
+    return clean;
+}
+
 /***************************************
  * Generate SQL query from a username  *
  * and password string                 *
  ***************************************/
 string genQuery(const string username, const string password)
 {
-    return "SELECT authenticate FROM usercredentials WHERE username='" + username + "' and password='" + password + "';";
+    return "SELECT authenticate FROM usercredentials WHERE username='" + username + "' AND password='" + password + "';";
 }
 
 /***************************************
@@ -44,9 +64,13 @@ void displayTestCases(vector<User> testCases) {
  * GOOD:                               *
  *      ^[a-zA-Z0-9_]*$                *
  ***************************************/
-string strongMitigation(const string query)
+void strongMitigation(const vector<User> testCases)
 {
-    return "";
+    for (auto x: testCases) {
+        x.username = checkForValidCharacters(x.username);
+        x.password = checkForValidCharacters(x.password);
+        cout << "   " << genQuery(x.username, x.password) << endl;
+    }
 }
 
 /***************************************
@@ -55,14 +79,16 @@ string strongMitigation(const string query)
  * GOOD:                               *
  *      [^;\-\'\s]*$                   *
  ***************************************/
-void weakMitigation(const vector<User> &testCases)
+void weakMitigation(const vector<User> testCases)
 {
+    // Note range based loops:
+    //      auto  -> does not modify data
+    //      auto& -> modifies data 
     for (auto x: testCases) {
         x.username = removeInvalidCharacters(x.username);
         x.password = removeInvalidCharacters(x.password);
         cout << "   " << genQuery(x.username, x.password) << endl;
     }
-
 }
 
 /***************************************
@@ -117,6 +143,7 @@ int main(int argc, char **argv)
                 cout << "Weak Mitigation:\n";
                 weakMitigation(testCases);
                 cout << "Strong Mitigation:\n";
+                strongMitigation(testCases);
             }
             else if (option == "3")
             {
@@ -124,6 +151,8 @@ int main(int argc, char **argv)
                 displayTestCases(testCases);
                 cout << "Weak Mitigation:\n";
                 weakMitigation(testCases);
+                cout << "Strong Mitigation:\n";
+                strongMitigation(testCases);
             }
             else if (option == "4")
             {
@@ -132,6 +161,8 @@ int main(int argc, char **argv)
                 displayTestCases(testCases);
                 cout << "Weak Mitigation:\n";
                 weakMitigation(testCases);
+                cout << "Strong Mitigation:\n";
+                strongMitigation(testCases);
             }
             else if (option == "5")
             {
@@ -140,6 +171,8 @@ int main(int argc, char **argv)
                 displayTestCases(testCases);
                 cout << "Weak Mitigation:\n";
                 weakMitigation(testCases);
+                cout << "Strong Mitigation:\n";
+                strongMitigation(testCases);
             }
             else if (option == "6")
             {
@@ -165,6 +198,8 @@ int main(int argc, char **argv)
             displayTestCases(testCases);
             cout << "Weak Mitigation:\n";
             weakMitigation(testCases);
+            cout << "Strong Mitigation:\n";
+            strongMitigation(testCases);
         }
         else if (type == "union") {
             testUnion(testCases);
@@ -172,6 +207,8 @@ int main(int argc, char **argv)
             displayTestCases(testCases);
             cout << "Weak Mitigation:\n";
             weakMitigation(testCases);
+            cout << "Strong Mitigation:\n";
+            strongMitigation(testCases);
         }
         else if (type == "state") {
             testAddState(testCases);
@@ -179,6 +216,8 @@ int main(int argc, char **argv)
             displayTestCases(testCases);
             cout << "Weak Mitigation:\n";
             weakMitigation(testCases);
+            cout << "Strong Mitigation:\n";
+            strongMitigation(testCases);
         }
         else if (type == "comment") {
             testComment(testCases);
@@ -186,6 +225,8 @@ int main(int argc, char **argv)
             displayTestCases(testCases);
             cout << "Weak Mitigation:\n";
             weakMitigation(testCases);
+            cout << "Strong Mitigation:\n";
+            strongMitigation(testCases);
         }
         else {
             cout << "Invalid type argument. Try again :)\n";
